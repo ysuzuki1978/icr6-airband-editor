@@ -72,4 +72,8 @@ bash build-app.sh
 
 クローニング通信とデータ配置の参照先です。 [CHIRPのIC-R6対応提案](https://github.com/kk7ds/chirp/pull/1082) · [LinuxのPL2303ドライバー](https://github.com/torvalds/linux/blob/master/drivers/usb/serial/pl2303.c) · [libusbのソース](https://github.com/libusb/libusb/tree/v1.0.30)
 
-配布ビルドには動的ライブラリとしてlibusb 1.0.30（LGPL-2.1-or-later）を同梱しています。ライセンス文はアプリ内の `Contents/Resources/libusb-COPYING.txt` にあり、対応するソースアーカイブは同じリリースから取得できます。
+## ライセンス
+
+このアプリの独自部分は[MIT License](LICENSE)で公開しています。Copyright (c) 2026 ysuzuki1978
+
+配布ビルドには動的ライブラリとしてlibusb 1.0.30（LGPL-2.1-or-later）を同梱しています。MIT Licenseの文書はアプリ内の `Contents/Resources/LICENSE.txt`、libusbのライセンス文は `Contents/Resources/libusb-COPYING.txt` にあります。対応するlibusbのソースアーカイブは同じリリースから取得できます。
