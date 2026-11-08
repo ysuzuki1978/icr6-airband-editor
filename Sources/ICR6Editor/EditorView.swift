@@ -7,6 +7,7 @@ struct EditorView: View {
 
     private enum Page: String, CaseIterable {
         case airports = "空港プリセット"
+        case railways = "鉄道プリセット"
         case memories = "メモリー一覧"
     }
 
@@ -25,6 +26,7 @@ struct EditorView: View {
     @State private var deleting: MemoryChannel?
     @State private var excludedPresets = Set<String>()
     @State private var presetNames = [String: String]()
+    @State private var excludedRailwayPresets = Set<RailwayPreset.ID>()
 
     private var visibleChannels: [MemoryChannel] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -60,20 +62,17 @@ struct EditorView: View {
                 .labelsHidden()
                 .fixedSize()
                 Spacer()
-                if model.canUndoAirportReplacement {
-                    Button("空港セットの入れ替えを取り消す", action: model.undoAirportReplacement)
+                if let title = model.presetUndoTitle {
+                    Button(title, action: model.undoPresetReplacement)
                 }
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 11)
             Divider()
             if page == .airports {
-                AirbandView(model: model, excluded: $excludedPresets, names: $presetNames) {
-                    search = ""
-                    filter = .registered
-                    selection = model.channels.first(where: \.active)?.id
-                    page = .memories
-                }
+                AirbandView(model: model, excluded: $excludedPresets, names: $presetNames, showMemories: showPresetMemories)
+            } else if page == .railways {
+                RailwayView(model: model, excluded: $excludedRailwayPresets, showMemories: showPresetMemories)
             } else if model.image != nil {
                 HSplitView {
                     channelTable
@@ -117,6 +116,13 @@ struct EditorView: View {
         .onChange(of: model.image) {
             if selection == nil { selection = visibleChannels.first?.id }
         }
+    }
+
+    private func showPresetMemories() {
+        search = ""
+        filter = .registered
+        selection = model.channels.first(where: \.active)?.id
+        page = .memories
     }
 
     private var header: some View {

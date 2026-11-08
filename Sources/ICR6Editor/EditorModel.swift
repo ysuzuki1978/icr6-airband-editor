@@ -14,7 +14,7 @@ final class EditorModel {
     private(set) var baseline: RadioImage?
     private(set) var identity: RadioIdentity?
     private var savedImage: RadioImage?
-    private var airportUndo: (image: RadioImage, replacedAllMemories: Bool)?
+    private var presetUndo: (image: RadioImage, replacedAllMemories: Bool, setName: String)?
 
     private(set) var channels: [MemoryChannel] = []
     private(set) var changed = Set<Int>()
@@ -29,7 +29,10 @@ final class EditorModel {
     var busy: Bool { transfer != nil }
     var hasChanges: Bool { image != baseline }
     var canWrite: Bool { image != nil && cableConnected && !busy && (identity == nil || hasChanges) }
-    var canUndoAirportReplacement: Bool { airportUndo != nil && !busy }
+    var presetUndoTitle: String? {
+        guard !busy, let presetUndo else { return nil }
+        return "\(presetUndo.setName)の入れ替えを取り消す"
+    }
 
     func checkCable() {
         cableConnected = RadioSession.cableDetected
@@ -174,7 +177,7 @@ final class EditorModel {
                channels.contains(where: {
                    $0.id != number && $0.bank == previousBank && $0.bankPosition == restored.bankPosition
                }) {
-            errorMessage = "元のバンクに別の空港セットやチャンネルが入っているため、このチャンネルだけは戻せません。"
+            errorMessage = "元のバンクに別のチャンネルが入っているため、このチャンネルだけは戻せません。"
             return
         }
         image.restoreChannel(number, from: baseline)
@@ -188,9 +191,21 @@ final class EditorModel {
             throw R6Error("本体から読み出すか、ICFファイルを開いてください。")
         }
         let result = try JapanAirband.replace(airports, in: image, excluding: excluding, names: names)
+        return try applyPreset(result, replacing: image, setName: "空港セット")
+    }
+
+    func replaceRailways(_ regions: [RailwayRegion], including: Set<RailwayPreset.ID>) throws -> Bool {
+        guard !busy, let image else {
+            throw R6Error("本体から読み出すか、ICFファイルを開いてください。")
+        }
+        let result = try JapanRailways.replace(regions, in: image, including: including)
+        return try applyPreset(result, replacing: image, setName: "鉄道セット")
+    }
+
+    private func applyPreset(_ result: PresetReplacement, replacing image: RadioImage, setName: String) throws -> Bool {
         let scanBanks = result.scanBanks.joined(separator: " / ")
         if result.image == image {
-            status = "この空港セットは反映済みです。 \(scanBanks)"
+            status = "この\(setName)は反映済みです。 \(scanBanks)"
             return true
         }
         if result.previousCount > 0 {
@@ -208,22 +223,22 @@ final class EditorModel {
             alert.addButton(withTitle: "入れ替える").keyEquivalent = ""
             guard alert.runModal() == .alertSecondButtonReturn else { return false }
             guard self.image == image, !busy else {
-                throw R6Error("編集中のメモリーが変更されました。空港セットの入れ替えをやり直してください。")
+                throw R6Error("編集中のメモリーが変更されました。\(setName)の入れ替えをやり直してください。")
             }
         }
-        let undo = (image: image, replacedAllMemories: replacesAllMemories)
+        let undo = (image: image, replacedAllMemories: replacesAllMemories, setName: setName)
         updateImage(result.image)
-        airportUndo = undo
+        presetUndo = undo
         replacesAllMemories = true
         status = "通常メモリーを \(result.registered) 件に入れ替えました。 \(scanBanks)"
         return true
     }
 
-    func undoAirportReplacement() {
-        guard canUndoAirportReplacement, let airportUndo else { return }
-        updateImage(airportUndo.image)
-        replacesAllMemories = airportUndo.replacedAllMemories
-        status = "空港セットの入れ替えを取り消しました。"
+    func undoPresetReplacement() {
+        guard !busy, let presetUndo else { return }
+        updateImage(presetUndo.image)
+        replacesAllMemories = presetUndo.replacedAllMemories
+        status = "\(presetUndo.setName)の入れ替えを取り消しました。"
     }
 
     func confirmDiscard() -> Bool {
@@ -245,7 +260,7 @@ final class EditorModel {
     }
 
     private func updateImage(_ image: RadioImage) {
-        airportUndo = nil
+        presetUndo = nil
         self.image = image
         channels = image.channels
         changed = baseline.map { image.changedChannels(from: $0) } ?? []

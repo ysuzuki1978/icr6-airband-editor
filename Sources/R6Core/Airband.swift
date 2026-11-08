@@ -79,12 +79,7 @@ public enum JapanAirband {
         return try JSONDecoder().decode([JapanAirport].self, from: Data(contentsOf: url))
     }
 
-    public struct Replacement: Sendable {
-        public let image: RadioImage
-        public let registered: Int
-        public let previousCount: Int
-        public let scanBanks: [String]
-    }
+    public typealias Replacement = PresetReplacement
 
     public static func replace(_ airports: [JapanAirport], in original: RadioImage,
                                excluding: Set<String> = [], names: [String: String] = [:]) throws -> Replacement {
@@ -92,40 +87,12 @@ public enum JapanAirband {
               Set(airports.map(\.id)).count == airports.count else {
             throw R6Error("空港を1〜4か所選んでください。")
         }
-        let groups = airports.map { airport in
-            (airport: airport, presets: airport.presets().filter { !excluding.contains($0.id) })
-        }.filter { !$0.presets.isEmpty }
-        guard !groups.isEmpty else { throw R6Error("登録する周波数を1件以上選んでください。") }
-
-        var image = original
-        let previous = original.channels.filter(\.active)
-        for channel in previous { image.remove(channel.id) }
-        for bank in RadioImage.bankLetters.indices where !original.bankName(bank).isEmpty {
-            try image.setBankName("", at: bank)
-        }
-
-        var empty = (0..<RadioImage.channelCount).makeIterator()
-        var registered = 0
-        var scanBanks = [String]()
-        for (bank, group) in groups.enumerated() {
-            let (airport, presets) = group
-            try image.setBankName(airport.bankName, at: bank)
-            scanBanks.append(image.bankLabel(bank))
-            for preset in presets {
-                guard let number = empty.next() else { throw R6Error("登録に必要な空きチャンネルが足りません。") }
-                var draft = ChannelDraft(image.channel(number))
-                draft.frequency = preset.mhz
-                draft.name = names[preset.id] ?? preset.name
-                draft.mode = .am
-                draft.bank = bank
-                do {
-                    try image.apply(draft, to: number)
-                } catch {
-                    throw R6Error("\(airport.bankName) \(preset.mhz) MHz　\(error.localizedDescription)")
-                }
-                registered += 1
+        let banks = airports.map { airport in
+            let channels = airport.presets().filter { !excluding.contains($0.id) }.map { preset in
+                PresetBank.Channel(frequency: preset.mhz, name: names[preset.id] ?? preset.name)
             }
+            return PresetBank(name: airport.bankName, mode: .am, channels: channels)
         }
-        return Replacement(image: image, registered: registered, previousCount: previous.count, scanBanks: scanBanks)
+        return try PresetReplacement.replace(banks, in: original)
     }
 }

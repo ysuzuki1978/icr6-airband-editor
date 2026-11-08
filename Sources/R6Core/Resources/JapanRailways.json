@@ -1,0 +1,115 @@
+[
+  {
+    "id": "HOK",
+    "name": "北海道",
+    "channels": [
+      {"hz": 148150000, "name": "NANAE", "operatorName": "JR北海道", "usage": "七飯駅 構内連絡", "group": "jr", "source": "jr"},
+      {"hz": 365187500, "name": "HKDYRD", "operatorName": "JR北海道", "usage": "函館駅 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365212500, "name": "OBIFRT", "operatorName": "JR貨物", "usage": "帯広貨物駅 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365250000, "name": "SPKF1", "operatorName": "JR貨物", "usage": "札幌貨物ターミナル 1", "group": "jr", "source": "jr"},
+      {"hz": 365275000, "name": "SPKF2", "operatorName": "JR貨物", "usage": "札幌貨物ターミナル 2", "group": "jr", "source": "jr"},
+      {"hz": 157970000, "name": "SPKTRM", "operatorName": "札幌市電", "usage": "路面電車 出庫・入庫など", "group": "other", "source": "sapporo"}
+    ]
+  },
+  {
+    "id": "TOH",
+    "name": "東北",
+    "channels": [
+      {"hz": 150970000, "name": "TOHSHK", "operatorName": "JR東日本", "usage": "仙台駅・盛岡駅 新幹線の連結作業", "group": "jr", "source": "jr"},
+      {"hz": 365175000, "name": "SENF1", "operatorName": "JR貨物", "usage": "仙台貨物ターミナル 1", "group": "jr", "source": "jr"},
+      {"hz": 365212500, "name": "SENF2", "operatorName": "JR貨物", "usage": "仙台貨物ターミナル 2", "group": "jr", "source": "jr"},
+      {"hz": 365237500, "name": "MORFRT", "operatorName": "JR貨物", "usage": "盛岡・仙台貨物ターミナル", "group": "jr", "source": "jr"},
+      {"hz": 365312500, "name": "HACFRT", "operatorName": "JR貨物", "usage": "八戸貨物駅・仙台貨物ターミナル", "group": "jr", "source": "jr"}
+    ]
+  },
+  {
+    "id": "KAN",
+    "name": "関東",
+    "channels": [
+      {"hz": 150970000, "name": "KANSHK", "operatorName": "JR東日本", "usage": "東京・小山 新幹線車両センター", "group": "jr", "source": "jr"},
+      {"hz": 365175000, "name": "OMYFRT", "operatorName": "JR貨物", "usage": "大宮車両所・八王子駅 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365200000, "name": "NZAFRT", "operatorName": "JR貨物", "usage": "新座貨物ターミナル・隅田川駅 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365287500, "name": "KWSFRT", "operatorName": "JR貨物", "usage": "川崎貨物駅", "group": "jr", "source": "jr"},
+      {"hz": 148930000, "name": "HITACH", "operatorName": "ひたちなか海浜鉄道", "usage": "湊線 定時通信", "group": "other", "source": "scheduled"},
+      {"hz": 147880000, "name": "KEIO", "operatorName": "京王電鉄", "usage": "定時通信の記録", "group": "other", "source": "scheduled"}
+    ]
+  },
+  {
+    "id": "HOKURI",
+    "name": "甲信越・北陸",
+    "channels": [
+      {"hz": 150970000, "name": "NAGSHK", "operatorName": "JR東日本・JR西日本", "usage": "長野新幹線車両センター・福井駅", "group": "jr", "source": "jr"},
+      {"hz": 352537500, "name": "CHUO", "operatorName": "JR東海", "usage": "中央西線（木曽福島〜塩尻など）", "group": "jr", "source": "jr"},
+      {"hz": 352562500, "name": "MINOBU", "operatorName": "JR東海", "usage": "身延線（山梨県内を含む）", "group": "jr", "source": "jr"},
+      {"hz": 365175000, "name": "KURFRT", "operatorName": "JR貨物", "usage": "黒井駅・坂城駅 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365200000, "name": "NIIFRT", "operatorName": "JR貨物", "usage": "新潟貨物ターミナル 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 415200000, "name": "NANAO", "operatorName": "JR西日本", "usage": "七尾線・越美北線など Cタイプ下り", "group": "jr", "source": "jr"},
+      {"hz": 150370000, "name": "TOYAMA", "operatorName": "富山地方鉄道", "usage": "定時通信", "group": "other", "source": "scheduled"}
+    ]
+  },
+  {
+    "id": "TOKAI",
+    "name": "東海",
+    "channels": [
+      {"hz": 352537500, "name": "JRC1", "operatorName": "JR東海", "usage": "中央西線・高山本線・飯田線・紀勢本線の一部", "group": "jr", "source": "jr"},
+      {"hz": 352550000, "name": "JRC2", "operatorName": "JR東海", "usage": "御殿場線・武豊線", "group": "jr", "source": "jr"},
+      {"hz": 352562500, "name": "JRC3", "operatorName": "JR東海", "usage": "身延線・参宮線", "group": "jr", "source": "jr"},
+      {"hz": 352587500, "name": "JRC5", "operatorName": "JR東海", "usage": "関西本線（名古屋〜亀山）", "group": "jr", "source": "jr"},
+      {"hz": 153290000, "name": "MEIT1", "operatorName": "名古屋鉄道", "usage": "列車無線 CH1", "group": "other", "source": "scheduled"},
+      {"hz": 153470000, "name": "MEIT2", "operatorName": "名古屋鉄道", "usage": "列車無線 CH2", "group": "other", "source": "scheduled"},
+      {"hz": 157970000, "name": "TENHAM", "operatorName": "天竜浜名湖鉄道", "usage": "定時通信", "group": "other", "source": "scheduled"},
+      {"hz": 149090000, "name": "ENTET", "operatorName": "遠州鉄道", "usage": "定時通信", "group": "other", "source": "scheduled"},
+      {"hz": 148090000, "name": "ASUNAR", "operatorName": "四日市あすなろう鉄道", "usage": "定時通信", "group": "other", "source": "scheduled"}
+    ]
+  },
+  {
+    "id": "KIN",
+    "name": "近畿",
+    "channels": [
+      {"hz": 150970000, "name": "TORSHK", "operatorName": "JR西日本", "usage": "鳥飼車両基地", "group": "jr", "source": "jr"},
+      {"hz": 365175000, "name": "KOBFRT", "operatorName": "JR貨物", "usage": "神戸貨物ターミナル・吹田機関区 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365187500, "name": "SUIFRT", "operatorName": "JR貨物", "usage": "吹田貨物ターミナル 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 415200000, "name": "KASAI", "operatorName": "JR西日本", "usage": "加古川線（西脇市〜谷川）など Cタイプ下り", "group": "jr", "source": "jr"},
+      {"hz": 147940000, "name": "HKTKZ", "operatorName": "阪急電鉄", "usage": "宝塚線", "group": "other", "source": "scheduled"},
+      {"hz": 151050000, "name": "HKKOB", "operatorName": "阪急電鉄", "usage": "神戸線", "group": "other", "source": "scheduled"},
+      {"hz": 151790000, "name": "KINT1", "operatorName": "近畿日本鉄道", "usage": "列車無線・定時通信", "group": "other", "source": "scheduled"},
+      {"hz": 152190000, "name": "KINT2", "operatorName": "近畿日本鉄道", "usage": "列車無線・定時通信", "group": "other", "source": "scheduled"}
+    ]
+  },
+  {
+    "id": "CHG",
+    "name": "中国",
+    "channels": [
+      {"hz": 150970000, "name": "CHGSHK", "operatorName": "JR西日本", "usage": "新幹線車両所（岡山・広島）", "group": "jr", "source": "jr"},
+      {"hz": 365225000, "name": "HIJFRT", "operatorName": "JR貨物", "usage": "広島貨物ターミナル", "group": "jr", "source": "jr"},
+      {"hz": 365250000, "name": "OKAFRT", "operatorName": "JR貨物", "usage": "岡山・広島貨物ターミナル", "group": "jr", "source": "jr"},
+      {"hz": 415200000, "name": "CHGCTR", "operatorName": "JR西日本", "usage": "山陰本線・津山線・呉線など Cタイプ下り", "group": "jr", "source": "jr"}
+    ]
+  },
+  {
+    "id": "SHK",
+    "name": "四国",
+    "channels": [
+      {"hz": 365187500, "name": "MYJYD1", "operatorName": "JR四国", "usage": "松山運転所 構内連絡 CH1", "group": "jr", "source": "jr"},
+      {"hz": 365200000, "name": "MYJSIG", "operatorName": "JR四国", "usage": "松山駅 信号扱い所", "group": "jr", "source": "jr"},
+      {"hz": 365225000, "name": "MYJYD2", "operatorName": "JR四国", "usage": "松山運転所 構内連絡 CH2", "group": "jr", "source": "jr"},
+      {"hz": 365287500, "name": "KCZYRD", "operatorName": "JR四国", "usage": "高知駅・徳島県内 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365312500, "name": "TKSYRD", "operatorName": "JR四国", "usage": "徳島県内 構内入換", "group": "jr", "source": "jr"}
+    ]
+  },
+  {
+    "id": "KYU",
+    "name": "九州",
+    "channels": [
+      {"hz": 150970000, "name": "KYUSHK", "operatorName": "JR九州", "usage": "博多・熊本・大村 新幹線車両基地", "group": "jr", "source": "jr"},
+      {"hz": 153470000, "name": "HKTSTA", "operatorName": "JR九州", "usage": "博多駅 駅員連絡", "group": "jr", "source": "jr"},
+      {"hz": 365225000, "name": "TAKYRD", "operatorName": "JR九州", "usage": "竹下の車両施設 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365237500, "name": "NOBYRD", "operatorName": "JR九州", "usage": "南延岡駅 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 365250000, "name": "OITYRD", "operatorName": "JR九州", "usage": "大分車両センター・南宮崎駅 構内作業", "group": "jr", "source": "jr"},
+      {"hz": 365275000, "name": "KARYRD", "operatorName": "JR九州", "usage": "唐津車両センター", "group": "jr", "source": "jr"},
+      {"hz": 365212500, "name": "FUKFRT", "operatorName": "JR貨物", "usage": "福岡貨物ターミナル", "group": "jr", "source": "jr"},
+      {"hz": 415200000, "name": "OMURA", "operatorName": "JR九州", "usage": "大村線・長崎本線・久大本線など Cタイプ下り", "group": "jr", "source": "jr"},
+      {"hz": 147800000, "name": "NISTET", "operatorName": "西日本鉄道", "usage": "天神大牟田線 列車無線（現用未確認）", "group": "other", "source": "fukuoka"}
+    ]
+  }
+]

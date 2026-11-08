@@ -95,6 +95,54 @@ final class RadioCoreTests: XCTestCase {
         XCTAssertEqual(try after.image.mergingEdits(after.image, original: before.image, replacingAllMemories: true), after.image)
     }
 
+    func testRailwayCatalogProgramsEveryFrequencyInFM() throws {
+        let regions = try JapanRailways.load()
+        let all = regions.flatMap(\.channels)
+        XCTAssertEqual(Set(regions.map(\.id)).count, regions.count)
+        XCTAssertEqual(Set(all.map(\.id)).count, all.count)
+        XCTAssertTrue(all.contains { $0.group == .other })
+        XCTAssertTrue(all.allSatisfy { (1...6).contains($0.name.utf8.count) && $0.source.url.scheme == "https" })
+        let original = try blankImage()
+        for region in regions {
+            XCTAssertFalse(region.channels.isEmpty, region.name)
+            XCTAssertEqual(Set(region.channels.map(\.hz)).count, region.channels.count, region.name)
+            let result = try JapanRailways.replace([region], in: original, including: Set(region.channels.map(\.id)))
+            XCTAssertEqual(result.scanBanks, ["A · \(region.id)"])
+            XCTAssertEqual(result.registered, region.channels.count)
+            for (index, preset) in region.channels.enumerated() {
+                let channel = result.image.channel(index)
+                XCTAssertTrue(channel.active)
+                XCTAssertEqual(channel.frequency, preset.mhz, preset.name)
+                XCTAssertEqual(channel.name, preset.name)
+                XCTAssertEqual(channel.mode, .fm)
+                XCTAssertEqual(channel.bank, 0)
+            }
+        }
+    }
+
+    func testRailwayReplacementClearsOldAirportsAndHonorsSelection() throws {
+        let regions = try JapanRailways.load()
+        let shikoku = try XCTUnwrap(regions.first { $0.id == JapanRailways.home })
+        let tokai = try XCTUnwrap(regions.first { $0.id == "TOKAI" })
+        let hokkaido = try XCTUnwrap(regions.first { $0.id == "HOK" })
+        let airports = try JapanAirband.load()
+        let original = try JapanAirband.replace(Array(airports.prefix(3)), in: blankImage()).image
+        let checked: Set<RailwayPreset.ID> = ["MYJYD1", "MEIT1"]
+        let selection = [shikoku, hokkaido, tokai]
+        let result = try JapanRailways.replace(selection, in: original, including: checked)
+        let active = result.image.channels.filter(\.active)
+        XCTAssertEqual(result.previousCount, original.channels.filter(\.active).count)
+        XCTAssertEqual(result.scanBanks, ["A · SHK", "B · TOKAI"])
+        XCTAssertEqual(result.image.bankName(2), "")
+        XCTAssertEqual(active.map(\.frequency), ["365.1875", "153.290"])
+        XCTAssertEqual(active.map(\.name), ["MYJYD1", "MEIT1"])
+        XCTAssertEqual(active.map(\.bankSlot), ["A00", "B00"])
+        XCTAssertEqual(try original.mergingEdits(result.image, original: original, replacingAllMemories: true), result.image)
+        XCTAssertEqual(try JapanRailways.replace(selection, in: result.image, including: checked).image, result.image)
+        XCTAssertThrowsError(try JapanRailways.replace(selection, in: original, including: []))
+        XCTAssertThrowsError(try JapanRailways.replace(Array(regions.prefix(5)), in: original, including: checked))
+    }
+
     func testFullReplacementPreservesScanEdgesAndRejectsConcurrentMemoryChanges() throws {
         let catalog = try JapanAirband.load()
         let itami = try XCTUnwrap(catalog.first { $0.iata == "ITM" })
