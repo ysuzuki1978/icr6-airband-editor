@@ -1,0 +1,5 @@
+/.build/
+/.swiftpm/
+/IC-R6 メモリーエディタ.app/
+*.icf
+.DS_Store
