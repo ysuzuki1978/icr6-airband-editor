@@ -49,7 +49,7 @@
 
 ## 国内の鉄道無線
 
-北海道から九州まで9地域のアナログFMを収録しています。JR各社・JR貨物の列車指令、駅・車両基地・貨物ターミナルの構内連絡、札幌市電・ひたちなか海浜鉄道・京王・富山地方鉄道・名鉄・阪急・近鉄などの受信候補です。私鉄・公営は6地域からの抜粋です。伊予鉄など、周波数とアナログ運用を裏付ける資料が揃っていない事業者は収録対象外です。西鉄の147.800 MHzは福岡県の資料に基づく候補で、現用は未確認です。各行のリンクから出典を開けます。 [JRの公開受信記録（2026年7月12日版）](https://rxlife.net/compilation/jr.php) · [私鉄などの定時通信の受信記録](https://rxlife.net/compilation/scheduled_l1.php) · [札幌市電の受信記録](https://ameblo.jp/dash8rjco/entry-12737753872.html) · [福岡県の西鉄無線局位置図](https://www.bousai.pref.fukuoka.jp/files/uploads/2.pdf)
+北海道から九州まで9地域のアナログFM受信候補を収録しています。JR各社・JR貨物の列車指令や構内連絡に加え、札幌市電・京王・名鉄・阪急・近鉄・伊予鉄など、各地域の私鉄・公営から抜粋しています。各行のリンクから出典を開けます。西鉄の147.800 MHzは福岡県の資料に基づく候補で、現用は未確認です。 [JRの公開受信記録（2026年7月12日版）](https://rxlife.net/compilation/jr.php) · [私鉄などの定時通信の受信記録](https://rxlife.net/compilation/scheduled_l1.php) · [札幌市電の受信記録](https://ameblo.jp/dash8rjco/entry-12737753872.html) · [福岡県の西鉄無線局位置図](https://www.bousai.pref.fukuoka.jp/files/uploads/2.pdf)
 
 鉄道の周波数は、地域内で **JR** と **私鉄・公営など** に分けて表示します。本体では **B NAME** で `SHK`（四国）や `TOKAI`（東海）、**M NAME** で `MYJYD1` など各チャンネルの名前を表示できます。
 
@@ -58,6 +58,10 @@
 | 松山運転所 構内連絡 CH1 | 365.1875 | `MYJYD1` |
 | 松山駅 信号扱い所 | 365.200 | `MYJSIG` |
 | 松山運転所 構内連絡 CH2 | 365.225 | `MYJYD2` |
+| 伊予鉄道 | 151.790 | `IYO1` |
+| 伊予鉄道 | 153.650 | `IYO2` |
+
+伊予鉄道の2波と高松琴平電気鉄道、弘南鉄道、由利高原鉄道、広島電鉄などの一部候補は、アルインコの「DJ-X82一般仕様 周波数帳 2024夏」40〜41ページのFM掲載値です。現用は未確認です。伊予鉄道の2波は市内線と郊外線の対応も未確認です。周波数帳はクローンユーティリティのZIPに同梱されています。 [アルインコの配布ページ](https://alinco-denshi.com/download-detail/?index=5&post_id=2572&tab=03)
 
 国内版IC-R6で受信できるモードはFM・WFM・AMです。デジタル方式の列車無線は音声として聞けません。予讃線などに受信記録のある414.425 MHzと414.550 MHzも、国内版IC-R6の受信範囲外です。JRの一部路線で受信記録があるCタイプの415.200 MHzは範囲内です。 [アイコムの製品仕様](https://www.icom.co.jp/lineup/products/IC-R6/) · [鉄道・運輸機構のデジタル列車無線解説](https://www.jrtt.go.jp/construction/technology/telecommunication.html) · [JRの公開受信記録](https://rxlife.net/compilation/jr.php)
 

@@ -8,12 +8,13 @@ public struct RailwayRegion: Identifiable, Decodable, Sendable {
 
 public struct RailwayPreset: Identifiable, Decodable, Sendable {
     public enum Source: String, Decodable, Sendable {
-        case jr, scheduled, sapporo, fukuoka
+        case jr, scheduled, sapporo, fukuoka, alincoX82
 
         public var title: String {
             switch self {
             case .jr, .scheduled, .sapporo: "受信記録"
             case .fukuoka: "県の資料"
+            case .alincoX82: "周波数帳"
             }
         }
 
@@ -23,6 +24,7 @@ public struct RailwayPreset: Identifiable, Decodable, Sendable {
             case .scheduled: URL(string: "https://rxlife.net/compilation/scheduled_l1.php")!
             case .sapporo: URL(string: "https://ameblo.jp/dash8rjco/entry-12737753872.html")!
             case .fukuoka: URL(string: "https://www.bousai.pref.fukuoka.jp/files/uploads/2.pdf")!
+            case .alincoX82: URL(string: "https://alinco-denshi.com/download-detail/?index=5&post_id=2572&tab=03")!
             }
         }
     }

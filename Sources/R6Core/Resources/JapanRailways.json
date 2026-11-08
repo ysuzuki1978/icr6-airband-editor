@@ -19,7 +19,9 @@
       {"hz": 365175000, "name": "SENF1", "operatorName": "JR貨物", "usage": "仙台貨物ターミナル 1", "group": "jr", "source": "jr"},
       {"hz": 365212500, "name": "SENF2", "operatorName": "JR貨物", "usage": "仙台貨物ターミナル 2", "group": "jr", "source": "jr"},
       {"hz": 365237500, "name": "MORFRT", "operatorName": "JR貨物", "usage": "盛岡・仙台貨物ターミナル", "group": "jr", "source": "jr"},
-      {"hz": 365312500, "name": "HACFRT", "operatorName": "JR貨物", "usage": "八戸貨物駅・仙台貨物ターミナル", "group": "jr", "source": "jr"}
+      {"hz": 365312500, "name": "HACFRT", "operatorName": "JR貨物", "usage": "八戸貨物駅・仙台貨物ターミナル", "group": "jr", "source": "jr"},
+      {"hz": 150370000, "name": "YURI", "operatorName": "由利高原鉄道", "usage": "周波数帳掲載・現用未確認", "group": "other", "source": "alincoX82"},
+      {"hz": 151090000, "name": "KONAN", "operatorName": "弘南鉄道", "usage": "周波数帳掲載・現用未確認", "group": "other", "source": "alincoX82"}
     ]
   },
   {
@@ -83,7 +85,10 @@
       {"hz": 150970000, "name": "CHGSHK", "operatorName": "JR西日本", "usage": "新幹線車両所（岡山・広島）", "group": "jr", "source": "jr"},
       {"hz": 365225000, "name": "HIJFRT", "operatorName": "JR貨物", "usage": "広島貨物ターミナル", "group": "jr", "source": "jr"},
       {"hz": 365250000, "name": "OKAFRT", "operatorName": "JR貨物", "usage": "岡山・広島貨物ターミナル", "group": "jr", "source": "jr"},
-      {"hz": 415200000, "name": "CHGCTR", "operatorName": "JR西日本", "usage": "山陰本線・津山線・呉線など Cタイプ下り", "group": "jr", "source": "jr"}
+      {"hz": 415200000, "name": "CHGCTR", "operatorName": "JR西日本", "usage": "山陰本線・津山線・呉線など Cタイプ下り", "group": "jr", "source": "jr"},
+      {"hz": 150530000, "name": "MZBATA", "operatorName": "水島臨海鉄道・一畑電車", "usage": "周波数帳掲載・現用未確認", "group": "other", "source": "alincoX82"},
+      {"hz": 151330000, "name": "HIRODN", "operatorName": "広島電鉄", "usage": "周波数帳掲載・現用未確認", "group": "other", "source": "alincoX82"},
+      {"hz": 151650000, "name": "WAKASA", "operatorName": "若桜鉄道", "usage": "周波数帳掲載・現用未確認", "group": "other", "source": "alincoX82"}
     ]
   },
   {
@@ -94,7 +99,10 @@
       {"hz": 365200000, "name": "MYJSIG", "operatorName": "JR四国", "usage": "松山駅 信号扱い所", "group": "jr", "source": "jr"},
       {"hz": 365225000, "name": "MYJYD2", "operatorName": "JR四国", "usage": "松山運転所 構内連絡 CH2", "group": "jr", "source": "jr"},
       {"hz": 365287500, "name": "KCZYRD", "operatorName": "JR四国", "usage": "高知駅・徳島県内 構内入換", "group": "jr", "source": "jr"},
-      {"hz": 365312500, "name": "TKSYRD", "operatorName": "JR四国", "usage": "徳島県内 構内入換", "group": "jr", "source": "jr"}
+      {"hz": 365312500, "name": "TKSYRD", "operatorName": "JR四国", "usage": "徳島県内 構内入換", "group": "jr", "source": "jr"},
+      {"hz": 151790000, "name": "IYO1", "operatorName": "伊予鉄道", "usage": "路線と現用は未確認", "group": "other", "source": "alincoX82"},
+      {"hz": 153650000, "name": "IYO2", "operatorName": "伊予鉄道", "usage": "路線と現用は未確認", "group": "other", "source": "alincoX82"},
+      {"hz": 153470000, "name": "KOTODN", "operatorName": "高松琴平電気鉄道", "usage": "基地局の掲載値・現用未確認", "group": "other", "source": "alincoX82"}
     ]
   },
   {
