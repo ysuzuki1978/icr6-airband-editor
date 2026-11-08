@@ -6,8 +6,7 @@ struct EditorView: View {
         .flatMap { NSImage(contentsOf: $0) }
 
     private enum Page: String, CaseIterable {
-        case airports = "空港プリセット"
-        case railways = "鉄道プリセット"
+        case presets = "受信セット"
         case memories = "メモリー一覧"
     }
 
@@ -18,7 +17,7 @@ struct EditorView: View {
     }
 
     @Bindable var model: EditorModel
-    @State private var page = Page.airports
+    @State private var page = Page.presets
     @State private var search = ""
     @State private var filter = Filter.registered
     @State private var selection: Int?
@@ -62,17 +61,16 @@ struct EditorView: View {
                 .labelsHidden()
                 .fixedSize()
                 Spacer()
-                if let title = model.presetUndoTitle {
-                    Button(title, action: model.undoPresetReplacement)
+                if page == .memories, model.canUndoPresetReplacement {
+                    Button("受信セットの入れ替えを取り消す", action: model.undoPresetReplacement)
                 }
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 11)
             Divider()
-            if page == .airports {
-                AirbandView(model: model, excluded: $excludedPresets, names: $presetNames, showMemories: showPresetMemories)
-            } else if page == .railways {
-                RailwayView(model: model, excluded: $excludedRailwayPresets, showMemories: showPresetMemories)
+            if page == .presets {
+                PresetComposerView(model: model, excludedAirband: $excludedPresets, airbandNames: $presetNames,
+                                   excludedRailway: $excludedRailwayPresets, showMemories: showPresetMemories)
             } else if model.image != nil {
                 HSplitView {
                     channelTable
@@ -155,11 +153,13 @@ struct EditorView: View {
                 Label("本体から読み出す", systemImage: "arrow.down.to.line")
             }
             .disabled(model.busy || !model.cableConnected)
-            Button(action: model.writeRadio) {
-                Label("本体へ書き込む…", systemImage: "arrow.up.to.line")
+            if page == .memories {
+                Button(action: model.writeRadio) {
+                    Label("本体へ書き込む…", systemImage: "arrow.up.to.line")
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!model.canWrite)
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(!model.canWrite)
         }
         .controlSize(.large)
         .padding(.horizontal, 20)

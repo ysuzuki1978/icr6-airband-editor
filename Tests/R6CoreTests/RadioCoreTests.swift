@@ -143,6 +143,37 @@ final class RadioCoreTests: XCTestCase {
         XCTAssertThrowsError(try JapanRailways.replace(Array(regions.prefix(5)), in: original, including: checked))
     }
 
+    func testCombinedPresetKeepsSelectedAirAndRailInSeparateBanks() throws {
+        let airports = try JapanAirband.load()
+        let matsuyama = try XCTUnwrap(airports.first { $0.id == JapanAirband.home })
+        let haneda = try XCTUnwrap(airports.first { $0.iata == "HND" })
+        let regions = try JapanRailways.load()
+        let shikoku = try XCTUnwrap(regions.first { $0.id == JapanRailways.home })
+        let tokai = try XCTUnwrap(regions.first { $0.id == "TOKAI" })
+        let plan = try PresetPlan(
+            airports: [matsuyama, haneda],
+            excludingAirband: Set(haneda.presets().map(\.id)).union(["RJOM-126200"]),
+            airbandNames: ["RJOM-118350": "MYJTST"],
+            railwayRegions: [shikoku, tokai], includingRailway: ["MYJYD1"]
+        )
+        XCTAssertEqual(plan.banks.map(\.name), ["MYJ", "SHK"])
+        XCTAssertEqual(plan.banks.map(\.count), [5, 1])
+        XCTAssertEqual(plan.channelCount, 6)
+
+        let original = try JapanAirband.replace([haneda], in: blankImage()).image
+        let result = try plan.replace(in: original)
+        let active = result.image.channels.filter(\.active)
+        XCTAssertEqual(result.scanBanks, ["A · MYJ", "B · SHK"])
+        XCTAssertEqual(result.registered, plan.channelCount)
+        XCTAssertEqual(active.map(\.mode), [.am, .am, .am, .am, .am, .fm])
+        XCTAssertEqual(active.map(\.bankSlot), ["A00", "A01", "A02", "A03", "A04", "B00"])
+        XCTAssertEqual(active.first?.name, "MYJTST")
+        XCTAssertEqual(active.last?.frequency, "365.1875")
+        XCTAssertEqual(active.last?.name, "MYJYD1")
+        XCTAssertEqual(try original.mergingEdits(result.image, original: original, replacingAllMemories: true), result.image)
+        XCTAssertThrowsError(try PresetPlan().replace(in: original))
+    }
+
     func testFullReplacementPreservesScanEdgesAndRejectsConcurrentMemoryChanges() throws {
         let catalog = try JapanAirband.load()
         let itami = try XCTUnwrap(catalog.first { $0.iata == "ITM" })

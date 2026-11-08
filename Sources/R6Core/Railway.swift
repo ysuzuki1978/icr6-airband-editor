@@ -60,16 +60,19 @@ public enum JapanRailways {
 
     public static func replace(_ regions: [RailwayRegion], in original: RadioImage,
                                including: Set<RailwayPreset.ID>) throws -> PresetReplacement {
+        try PresetPlan(banks: banks(regions, including: including)).replace(in: original)
+    }
+
+    static func banks(_ regions: [RailwayRegion], including: Set<RailwayPreset.ID>) throws -> [PresetPlan.Bank] {
         guard (1...maximumRegions).contains(regions.count),
               Set(regions.map(\.id)).count == regions.count else {
             throw R6Error("鉄道の地域を1〜4か所選んでください。")
         }
-        let banks = regions.map { region in
+        return regions.map { region in
             let channels = region.channels.filter { including.contains($0.id) }.map { preset in
-                PresetBank.Channel(frequency: preset.mhz, name: preset.name)
+                PresetPlan.Bank.Channel(frequency: preset.mhz, name: preset.name)
             }
-            return PresetBank(name: region.id, mode: .fm, channels: channels)
+            return PresetPlan.Bank(name: region.id, title: region.name, mode: .fm, channels: channels)
         }
-        return try PresetReplacement.replace(banks, in: original)
     }
 }

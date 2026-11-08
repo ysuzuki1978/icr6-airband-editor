@@ -14,7 +14,7 @@ final class EditorModel {
     private(set) var baseline: RadioImage?
     private(set) var identity: RadioIdentity?
     private var savedImage: RadioImage?
-    private var presetUndo: (image: RadioImage, replacedAllMemories: Bool, setName: String)?
+    private var presetUndo: (image: RadioImage, replacedAllMemories: Bool)?
 
     private(set) var channels: [MemoryChannel] = []
     private(set) var changed = Set<Int>()
@@ -29,10 +29,7 @@ final class EditorModel {
     var busy: Bool { transfer != nil }
     var hasChanges: Bool { image != baseline }
     var canWrite: Bool { image != nil && cableConnected && !busy && (identity == nil || hasChanges) }
-    var presetUndoTitle: String? {
-        guard !busy, let presetUndo else { return nil }
-        return "\(presetUndo.setName)の入れ替えを取り消す"
-    }
+    var canUndoPresetReplacement: Bool { !busy && presetUndo != nil }
 
     func checkCable() {
         cableConnected = RadioSession.cableDetected
@@ -186,26 +183,14 @@ final class EditorModel {
         status = "CH \(image.channel(number).number) の編集を取り消しました。"
     }
 
-    func replaceAirports(_ airports: [JapanAirport], excluding: Set<String>, names: [String: String]) throws -> Bool {
+    func applyPreset(_ plan: PresetPlan) throws -> Bool {
         guard !busy, let image else {
             throw R6Error("本体から読み出すか、ICFファイルを開いてください。")
         }
-        let result = try JapanAirband.replace(airports, in: image, excluding: excluding, names: names)
-        return try applyPreset(result, replacing: image, setName: "空港セット")
-    }
-
-    func replaceRailways(_ regions: [RailwayRegion], including: Set<RailwayPreset.ID>) throws -> Bool {
-        guard !busy, let image else {
-            throw R6Error("本体から読み出すか、ICFファイルを開いてください。")
-        }
-        let result = try JapanRailways.replace(regions, in: image, including: including)
-        return try applyPreset(result, replacing: image, setName: "鉄道セット")
-    }
-
-    private func applyPreset(_ result: PresetReplacement, replacing image: RadioImage, setName: String) throws -> Bool {
+        let result = try plan.replace(in: image)
         let scanBanks = result.scanBanks.joined(separator: " / ")
         if result.image == image {
-            status = "この\(setName)は反映済みです。 \(scanBanks)"
+            status = "この受信セットはメモリー一覧に反映済みです。 \(scanBanks)"
             return true
         }
         if result.previousCount > 0 {
@@ -217,16 +202,16 @@ final class EditorModel {
 
                 入れ替え後　\(scanBanks)
 
-                本体への反映は「本体へ書き込む…」で行います。
+                まずアプリの一覧に反映します。本体への書き込みは次の画面で行います。
                 """
             alert.addButton(withTitle: "キャンセル")
-            alert.addButton(withTitle: "入れ替える").keyEquivalent = ""
+            alert.addButton(withTitle: "一覧に反映").keyEquivalent = ""
             guard alert.runModal() == .alertSecondButtonReturn else { return false }
             guard self.image == image, !busy else {
-                throw R6Error("編集中のメモリーが変更されました。\(setName)の入れ替えをやり直してください。")
+                throw R6Error("編集中のメモリーが変更されました。受信セットをもう一度反映してください。")
             }
         }
-        let undo = (image: image, replacedAllMemories: replacesAllMemories, setName: setName)
+        let undo = (image: image, replacedAllMemories: replacesAllMemories)
         updateImage(result.image)
         presetUndo = undo
         replacesAllMemories = true
@@ -238,7 +223,7 @@ final class EditorModel {
         guard !busy, let presetUndo else { return }
         updateImage(presetUndo.image)
         replacesAllMemories = presetUndo.replacedAllMemories
-        status = "\(presetUndo.setName)の入れ替えを取り消しました。"
+        status = "受信セットの入れ替えを取り消しました。"
     }
 
     func confirmDiscard() -> Bool {

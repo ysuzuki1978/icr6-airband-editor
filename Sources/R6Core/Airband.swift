@@ -83,16 +83,20 @@ public enum JapanAirband {
 
     public static func replace(_ airports: [JapanAirport], in original: RadioImage,
                                excluding: Set<String> = [], names: [String: String] = [:]) throws -> Replacement {
+        try PresetPlan(banks: banks(airports, excluding: excluding, names: names)).replace(in: original)
+    }
+
+    static func banks(_ airports: [JapanAirport], excluding: Set<String>,
+                      names: [String: String]) throws -> [PresetPlan.Bank] {
         guard (1...maximumAirports).contains(airports.count),
               Set(airports.map(\.id)).count == airports.count else {
             throw R6Error("空港を1〜4か所選んでください。")
         }
-        let banks = airports.map { airport in
+        return airports.map { airport in
             let channels = airport.presets().filter { !excluding.contains($0.id) }.map { preset in
-                PresetBank.Channel(frequency: preset.mhz, name: names[preset.id] ?? preset.name)
+                PresetPlan.Bank.Channel(frequency: preset.mhz, name: names[preset.id] ?? preset.name)
             }
-            return PresetBank(name: airport.bankName, mode: .am, channels: channels)
+            return PresetPlan.Bank(name: airport.bankName, title: airport.name, mode: .am, channels: channels)
         }
-        return try PresetReplacement.replace(banks, in: original)
     }
 }

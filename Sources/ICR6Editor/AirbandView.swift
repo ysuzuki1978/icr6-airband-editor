@@ -2,20 +2,12 @@ import R6Core
 import SwiftUI
 
 struct AirbandView: View {
-    let model: EditorModel
+    let catalog: [JapanAirport]
+    let selected: [JapanAirport]
+    let toggle: (JapanAirport) -> Void
     @Binding var excluded: Set<String>
     @Binding var names: [String: String]
-    let showMemories: () -> Void
-
-    @AppStorage("selectedAirports") private var selection = JapanAirband.home
-    @State private var catalog: [JapanAirport] = []
     @State private var query = ""
-    @State private var error: String?
-
-    private var selected: [JapanAirport] {
-        selection.split(separator: ",").prefix(JapanAirband.maximumAirports)
-            .compactMap { code in catalog.first { $0.icao == code } }
-    }
 
     private var matching: [JapanAirport] {
         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -26,76 +18,22 @@ struct AirbandView: View {
         return visible.filter { $0.id == JapanAirband.home } + visible.filter { $0.id != JapanAirband.home }
     }
 
-    private var checkedCount: Int {
-        selected.flatMap { $0.presets() }.filter { !excluded.contains($0.id) }.count
-    }
-
     var body: some View {
-        VStack(spacing: 0) {
-            selectionBar
-            Divider()
-            HSplitView {
-                airports.frame(minWidth: 270, idealWidth: 315, maxWidth: 370)
-                preview.frame(minWidth: 530, maxWidth: .infinity)
-            }
-            Divider()
-            actions
+        HSplitView {
+            airports.frame(minWidth: 250, idealWidth: 300, maxWidth: 350)
+            preview.frame(minWidth: 530, maxWidth: .infinity)
         }
-        .task {
-            guard catalog.isEmpty else { return }
-            do {
-                catalog = try JapanAirband.load()
-            } catch {
-                self.error = error.localizedDescription
-            }
-        }
-    }
-
-    private var selectionBar: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("出張のエアバンド").font(.title2.bold())
-                Spacer()
-                Text("\(selected.count) / \(JapanAirband.maximumAirports) 空港")
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            HStack(spacing: 8) {
-                if selected.isEmpty {
-                    Text("松山や出張先、乗り継ぎ先を選んでください。")
-                        .foregroundStyle(.secondary)
-                }
-                ForEach(selected) { airport in
-                    Button {
-                        toggle(airport)
-                    } label: {
-                        HStack(spacing: 6) {
-                            if airport.id == JapanAirband.home {
-                                Image(systemName: "house.fill")
-                            }
-                            Text(airport.bankName).fontWeight(.semibold)
-                            Text(airport.name.components(separatedBy: "（")[0]).lineLimit(1)
-                            Image(systemName: "xmark").font(.caption2)
-                        }
-                        .padding(.horizontal, 9)
-                        .padding(.vertical, 5)
-                        .background(.blue.opacity(0.14), in: Capsule())
-                    }
-                    .buttonStyle(.plain)
-                    .help("\(airport.name)を選択から外す")
-                    .accessibilityLabel("\(airport.name)を選択から外す")
-                }
-            }
-            .frame(minHeight: 26, alignment: .leading)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
     }
 
     private var airports: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("国内空港").font(.headline)
+                HStack {
+                    Text("国内空港").font(.headline)
+                    Spacer()
+                    Text("\(selected.count) / \(JapanAirband.maximumAirports) 空港")
+                        .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                }
                 HStack(spacing: 6) {
                     Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
                     TextField("空港名・地域・空港コード", text: $query)
@@ -224,51 +162,5 @@ struct AirbandView: View {
             .disabled(!enabled)
         }
         .padding(.vertical, 2)
-    }
-
-    private var actions: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                if let error {
-                    Text(error).foregroundStyle(.red)
-                } else if model.image == nil {
-                    Text("入れ替えるには、本体から読み出すかICFファイルを開いてください。")
-                } else {
-                    Text("\(checkedCount) 件を選択中 · 選んだ周波数で通常メモリーを全件入れ替え")
-                }
-                Text("管制波の出典 · AIP Japan 公開写し 2026-03-01")
-                    .font(.caption2)
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            Spacer()
-            Button("空港セットで全件入れ替え…", action: replace)
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .disabled(model.image == nil || model.busy || checkedCount == 0)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
-    }
-
-    private func toggle(_ airport: JapanAirport) {
-        var ids = selected.map(\.id)
-        if let index = ids.firstIndex(of: airport.id) {
-            ids.remove(at: index)
-        } else if ids.count < JapanAirband.maximumAirports {
-            ids.append(airport.id)
-        }
-        selection = ids.joined(separator: ",")
-        error = nil
-    }
-
-    private func replace() {
-        do {
-            guard try model.replaceAirports(selected, excluding: excluded, names: names) else { return }
-            error = nil
-            showMemories()
-        } catch {
-            self.error = error.localizedDescription
-        }
     }
 }

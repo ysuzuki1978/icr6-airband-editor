@@ -1,22 +1,41 @@
-struct PresetBank {
-    struct Channel {
-        let frequency: String
-        let name: String
-    }
-
-    let name: String
-    let mode: ReceiveMode
-    let channels: [Channel]
-}
-
 public struct PresetReplacement: Sendable {
     public let image: RadioImage
     public let registered: Int
     public let previousCount: Int
     public let scanBanks: [String]
+}
 
-    static func replace(_ banks: [PresetBank], in original: RadioImage) throws -> Self {
-        let banks = banks.filter { !$0.channels.isEmpty }
+public struct PresetPlan: Sendable {
+    public struct Bank: Sendable {
+        struct Channel: Sendable {
+            let frequency: String
+            let name: String
+        }
+
+        public let name: String
+        public let title: String
+        public let mode: ReceiveMode
+        let channels: [Channel]
+
+        public var count: Int { channels.count }
+    }
+
+    public let banks: [Bank]
+    public var channelCount: Int { banks.reduce(0) { $0 + $1.count } }
+
+    public init(airports: [JapanAirport] = [], excludingAirband: Set<String> = [],
+                airbandNames: [String: String] = [:], railwayRegions: [RailwayRegion] = [],
+                includingRailway: Set<RailwayPreset.ID> = []) throws {
+        let air = airports.isEmpty ? [] : try JapanAirband.banks(airports, excluding: excludingAirband, names: airbandNames)
+        let rail = railwayRegions.isEmpty ? [] : try JapanRailways.banks(railwayRegions, including: includingRailway)
+        self.init(banks: air + rail)
+    }
+
+    init(banks: [Bank]) {
+        self.banks = banks.filter { !$0.channels.isEmpty }
+    }
+
+    public func replace(in original: RadioImage) throws -> PresetReplacement {
         guard !banks.isEmpty else { throw R6Error("登録する周波数を1件以上選んでください。") }
 
         var image = original
@@ -48,6 +67,6 @@ public struct PresetReplacement: Sendable {
                 registered += 1
             }
         }
-        return Self(image: image, registered: registered, previousCount: previous.count, scanBanks: scanBanks)
+        return PresetReplacement(image: image, registered: registered, previousCount: previous.count, scanBanks: scanBanks)
     }
 }

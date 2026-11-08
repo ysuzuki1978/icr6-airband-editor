@@ -2,60 +2,32 @@ import R6Core
 import SwiftUI
 
 struct RailwayView: View {
-    let model: EditorModel
+    let catalog: [RailwayRegion]
+    let selected: [RailwayRegion]
+    let toggle: (RailwayRegion) -> Void
     @Binding var excluded: Set<RailwayPreset.ID>
-    let showMemories: () -> Void
 
-    @AppStorage("selectedRailwayRegions") private var selection = JapanRailways.home
-    @State private var catalog: [RailwayRegion] = []
-    @State private var error: String?
-
-    private var selected: [RailwayRegion] {
-        selection.split(separator: ",").prefix(JapanRailways.maximumRegions)
-            .compactMap { id in catalog.first { $0.id == id } }
-    }
-
-    private var included: Set<RailwayPreset.ID> {
-        Set(selected.flatMap(\.channels).map(\.id)).subtracting(excluded)
+    private var homeFirst: [RailwayRegion] {
+        catalog.filter { $0.id == JapanRailways.home } + catalog.filter { $0.id != JapanRailways.home }
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("出張先の鉄道無線").font(.title2.bold())
-                    Text("地域ごとにバンクを作り、列車指令や駅・車両基地の構内連絡をスキャンできます。")
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                Text("\(selected.count) / \(JapanRailways.maximumRegions) 地域")
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            Divider()
-            HSplitView {
-                regionList.frame(minWidth: 220, idealWidth: 260, maxWidth: 315)
-                preview.frame(minWidth: 590, maxWidth: .infinity)
-            }
-            Divider()
-            actions
-        }
-        .task {
-            guard catalog.isEmpty else { return }
-            do {
-                catalog = try JapanRailways.load()
-            } catch {
-                self.error = error.localizedDescription
-            }
+        HSplitView {
+            regionList.frame(minWidth: 220, idealWidth: 260, maxWidth: 315)
+            preview.frame(minWidth: 590, maxWidth: .infinity)
         }
     }
 
     private var regionList: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("国内の地域").font(.headline).padding(12)
-            List(catalog) { region in
+            HStack {
+                Text("国内の地域").font(.headline)
+                Spacer()
+                Text("\(selected.count) / \(JapanRailways.maximumRegions) 地域")
+                    .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+            }
+            .padding(12)
+            List(homeFirst) { region in
                 let isSelected = selected.contains { $0.id == region.id }
                 Button {
                     toggle(region)
@@ -139,51 +111,5 @@ struct RailwayView: View {
                 .frame(width: 56, alignment: .leading)
         }
         .padding(.vertical, 3)
-    }
-
-    private var actions: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                if let error {
-                    Text(error).foregroundStyle(.red)
-                } else if model.image == nil {
-                    Text("入れ替えるには、本体から読み出すかICFファイルを開いてください。")
-                } else {
-                    Text("\(included.count) 件を選択中 · 選んだ鉄道周波数で通常メモリーを全件入れ替え")
-                }
-                Text("地域ごとの受信記録・公開資料をもとに収録")
-                    .font(.caption2)
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            Spacer()
-            Button("鉄道セットで全件入れ替え…", action: replace)
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .disabled(model.image == nil || model.busy || included.isEmpty)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
-    }
-
-    private func toggle(_ region: RailwayRegion) {
-        var ids = selected.map(\.id)
-        if let index = ids.firstIndex(of: region.id) {
-            ids.remove(at: index)
-        } else if ids.count < JapanRailways.maximumRegions {
-            ids.append(region.id)
-        }
-        selection = ids.joined(separator: ",")
-        error = nil
-    }
-
-    private func replace() {
-        do {
-            guard try model.replaceRailways(selected, including: included) else { return }
-            error = nil
-            showMemories()
-        } catch {
-            self.error = error.localizedDescription
-        }
     }
 }
